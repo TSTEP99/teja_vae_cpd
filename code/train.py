@@ -1,7 +1,7 @@
 """File used to train VAE-CP"""
 from data import TensorDataset
 from helper import list_mus_vars, reparameterization
-from losses import laplacian_total_variation_loss, original_loss, total_variation_loss, supervised_laplacian_total_variation_loss, supervised_total_variation_loss
+from losses import laplacian_total_variation_loss, original_loss, total_variation_loss, supervised_laplacian_total_variation_loss, supervised_total_variation_loss, supervised_original_loss
 from math import floor
 from preprocess import create_indices, process_eegs
 from torchmetrics import MeanSquaredError
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     model.to(DEVICE)
     
     optimizer = torch.optim.Adam(model.parameters(), lr = LEARNING_RATE, betas = (0.9, 0.999), eps=1e-8)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience = 5, verbose = True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience = 3, verbose = True)
 
     train_losses = []
     test_losses = []
@@ -126,8 +126,8 @@ if __name__ == "__main__":
     
     for t in range(EPOCHS):
         print(f"Epoch {t+1}\n-------------------------------")
-        train_loss = train_loop(train_dataloader, model, supervised_total_variation_loss, optimizer, scheduler)
-        test_loss, mse_loss = test_loop(test_dataloader, model, supervised_total_variation_loss)
+        train_loss = train_loop(train_dataloader, model, supervised_original_loss, optimizer, scheduler)
+        test_loss, mse_loss = test_loop(test_dataloader, model, supervised_original_loss)
         train_losses.append(train_loss)
         test_losses.append(test_loss)
         mse_losses.append(mse_loss)

@@ -42,7 +42,7 @@ def regularization_loss(mus, lambdas, mus_tildes, lambdas_tildes):
         loss += (torch.log(std_tilde/std) + (var + (mu - mu_tilde)**2)/(2 * var_tilde) - 0.5).mean()#.sum()
     return loss
 
-def original_loss(samples, preds, mus, lambdas, mus_tildes, lambdas_tildes):
+def original_loss(samples, preds, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels = None, target_labels = None, dims = None):
     """Computes a loss function very similair to the VAE-CP paper"""
     rec_loss = reconstruction_loss(samples, preds)
     reg_loss = regularization_loss(mus, lambdas, mus_tildes, lambdas_tildes) 
@@ -54,10 +54,15 @@ def total_variation_loss(elements, preds, mus, lambdas, mus_tildes, lambdas_tild
 
     for i in range(len(mus)):
         if i in dims:
-            loss += 5 * compute_total_variation_loss(mus[i])
+            loss += compute_total_variation_loss(mus[i])
 
     return loss
 
+
+def supervised_original_loss(elements, preds, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels, target_labels, dims = [2]):
+    bce_loss = torch.nn.BCELoss()
+    return original_loss(elements, preds, mus, lambdas, mus_tildes, lambdas_tildes, dims) \
+    + 1* bce_loss(predicted_labels, target_labels.view(-1,1))
 
 def laplacian_total_variation_loss(elements,preds, mus, lambdas, mus_tildes, lambdas_tildes, dims = [2], spatial_dim=1):
 

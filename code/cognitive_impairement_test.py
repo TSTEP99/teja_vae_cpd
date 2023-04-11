@@ -50,11 +50,12 @@ def classify_Strat(features, labels, clf= GaussianNB(), adjust_sampling_weight=F
 
 
 if __name__ == "__main__":
-    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+    DEVICE = "cuda:1" if torch.cuda.is_available() else "cpu"
     MEAN = True
     print(f"Using {DEVICE} device")
 
-    model = torch.load("../checkpoints/teja_vae_cp_supervised_laplacian_total_variation_rank_6.pth")
+    #model = torch.load("../checkpoints/teja_vae_cp_supervised_laplacian_total_variation_rank_6.pth")
+    model = torch.load("../checkpoints/teja_vae_cp_epoch_100.pth")
     model.eval()
 
     full_psds, _, _, _, _, grade, epi_dx, alz_dx, pids, _, _, _ = process_eegs()
@@ -93,7 +94,7 @@ if __name__ == "__main__":
         used_factors.append(f"F{i+1}")
         df[f"F{i+1}"] = alz_latent[:,i]
 
-    #used_factors = ["F1", "F2", "F6"]
+    used_factors = ["F4", "F5"]
 
     print("Gaussian Naive Bayes:")
     print("MCI vs CN:")

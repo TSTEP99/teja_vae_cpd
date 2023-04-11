@@ -99,7 +99,7 @@ class teja_decoder_cpd(nn.Module):
 
             #Sample Elements
             elements = reparameterization(elements_mean, elements_log_var)
-            factor_sum+= 1/self.rank * self.sigmoid(elements)
+            factor_sum+= 1/self.rank * elements #self.sigmoid(elements)
 
         # #Samples on a per element basis using output of decoder layers
         # sample_elements = self._reparameterization(elements_mean, elements_log_var)
