@@ -19,9 +19,9 @@ def train_loop(dataloader, model, loss_fn, optimizer, scheduler, verbose = True)
 
     for batch, (samples, target_labels) in tqdm(enumerate(dataloader)):
         # Compute prediction and loss
-        tensor, latent_means, latent_log_vars, predicted_labels = model(samples)
+        mean_tensor, var_tensor, latent_means, latent_log_vars, predicted_labels = model(samples)
         mus, lambdas, mus_tildes, lambdas_tildes = list_mus_vars(latent_means, latent_log_vars, model)
-        loss = loss_fn(samples, tensor, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels, target_labels)
+        loss = loss_fn(samples, mean_tensor, var_tensor, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels, target_labels)
         train_loss += loss.item()
 
         # Backpropagation
@@ -49,12 +49,12 @@ def test_loop(dataloader, model, loss_fn, verbose = True):
 
     with torch.no_grad():
         for batch, (samples, target_labels) in tqdm(enumerate(dataloader)):
-            tensor, latent_means, latent_log_vars, predicted_labels = model(samples)
+            mean_tensor, var_tensor, latent_means, latent_log_vars, predicted_labels = model(samples)
             mus, lambdas, mus_tildes, lambdas_tildes = list_mus_vars(latent_means, latent_log_vars, model)
-            loss = loss_fn(samples, tensor, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels, target_labels)
+            loss = loss_fn(samples,mean_tensor, var_tensor, mus, lambdas, mus_tildes, lambdas_tildes, predicted_labels, target_labels)
             test_loss += loss.item()
             mean_squared_error = MeanSquaredError(squared = False).to(samples.device)
-            mse_loss +=  mean_squared_error(samples, tensor).item()
+            mse_loss +=  mean_squared_error(samples, mean_tensor).item()
 
     test_loss /= num_batches
     mse_loss /= num_batches
@@ -126,7 +126,8 @@ if __name__ == "__main__":
     
     for t in range(EPOCHS):
         print(f"Epoch {t+1}\n-------------------------------")
-        train_loss = train_loop(train_dataloader, model, supervised_original_loss, optimizer, scheduler)
+        train_loss = train_loop(train_dataloader, model, supervised_original_loss, optimizer, scheduler, verbose)
+        #test_loss = test_loop(test_dataloader, model, supervised_original_loss)
         test_loss, mse_loss = test_loop(test_dataloader, model, supervised_original_loss)
         train_losses.append(train_loss)
         test_losses.append(test_loss)

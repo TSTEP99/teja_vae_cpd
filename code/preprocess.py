@@ -62,7 +62,7 @@ def parse_single(npz, average=False):
             'epi_dx': epi_dx, 'alz_dx': alz_dx, 'gender': gender, 'pid': patient_id, 
             'sid': session_id, 'clip_id': clip_id, 'raw': raw_eeg, 'report': report}
 
-def process_eegs(stats_dir = '/mnt/ssd_4tb_0/TUH/processed_yoga/', return_raw=False):
+def process_eegs(stats_dir = '/mnt/ssd_4tb_0/NEEDS_CLEANUP_TUH/processed_yoga/', return_raw=False):
     """Function for preprocessing multiple EEG records"""
 
     #computes a list of the npz files containing the EEG data

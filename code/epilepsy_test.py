@@ -95,7 +95,7 @@ if __name__ == "__main__":
         used_factors.append(f"F{i+1}")
         df[f"F{i+1}"] = epi_latent[:,i]
 
-    used_factors = ["F4", "F5"]
+    #used_factors = ["F4", "F5"]
 
     print("Gaussian Naive Bayes:")
     print("PNES vs CN:")

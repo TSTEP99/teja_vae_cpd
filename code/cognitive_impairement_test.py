@@ -94,7 +94,7 @@ if __name__ == "__main__":
         used_factors.append(f"F{i+1}")
         df[f"F{i+1}"] = alz_latent[:,i]
 
-    used_factors = ["F4", "F5"]
+    #used_factors = ["F1", "F3", "F4"]
 
     print("Gaussian Naive Bayes:")
     print("MCI vs CN:")

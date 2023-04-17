@@ -28,6 +28,6 @@ class teja_vae_cpd(nn.Module):
         means, log_vars, predicted_labels = self.encoder(x)
 
         #Passes mean and log variance throught decoder to try to reconstruct original tensor
-        tensor = self.decoder(means, log_vars)
+        mean_tensor, var_tensor = self.decoder(means, log_vars)
 
-        return tensor, means, log_vars, predicted_labels
+        return mean_tensor, var_tensor, means, log_vars, predicted_labels

@@ -76,7 +76,9 @@ class teja_decoder_cpd(nn.Module):
         factor_log_vars.extend(self.other_lambdas)
 
 
-        factor_sum = 0
+        #factor_sum = 0
+        factor_mean = 0
+        factor_var = 0 
 
         #Samples for each "rank-1" tensor
         for r in range(self.rank):
@@ -97,18 +99,26 @@ class teja_decoder_cpd(nn.Module):
 
             elements_log_var = self.FC_log_var(hidden)
 
-            #Sample Elements
-            elements = reparameterization(elements_mean, elements_log_var)
-            factor_sum+= 1/self.rank * elements #self.sigmoid(elements)
+            #Sample mean and variance
+            factor_mean += elements_mean
+            factor_var += torch.exp(elements_log_var)
+
+            # #Sample Elements
+            # elements = reparameterization(elements_mean, elements_log_var)
+            # factor_sum+= 1/self.rank * elements #self.sigmoid(elements)
 
         # #Samples on a per element basis using output of decoder layers
         # sample_elements = self._reparameterization(elements_mean, elements_log_var)
 
         #Reshape mean and log_var to original tensor size
 
-        return_tensor = factor_sum.view(*dims)
+        return_mean = factor_mean.view(*dims)
+        return_var = factor_var.view(*dims)
 
-        return return_tensor
+        #return_tensor = factor_sum.view(*dims)
+
+
+        return return_mean, return_var
         
 
     def _create_indices(self,dims):
